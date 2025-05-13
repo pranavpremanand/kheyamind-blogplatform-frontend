@@ -21,6 +21,7 @@ import BlogTitleSlug from "@/components/admin/BlogTitleSlug";
 import BlogImageUpload from "@/components/admin/BlogImageUpload";
 import BlogSeoFields from "@/components/admin/BlogSeoFields";
 import BlogFormSkeleton from "@/components/admin/BlogFormSkeleton";
+import BlogSubmitLoader from "@/components/admin/BlogSubmitLoader";
 import BlogPublishDate from "@/components/admin/BlogPublishDate";
 import { toast } from "sonner";
 import { CategoryApi } from "@/lib/api";
@@ -35,6 +36,8 @@ const BlogForm = () => {
     register,
     errors,
     loading,
+    initialLoading,
+    isSubmitting,
     imagePreview,
     isEditing,
     content,
@@ -167,20 +170,22 @@ const BlogForm = () => {
             {isEditing ? "Edit Blog Post" : "Create Blog Post"}
           </h1>
         </div>
-        {!loading && (
-          <Button onClick={handleSubmit} disabled={loading}>
-            {loading
-              ? isEditing
-                ? "Updating..."
-                : "Creating..."
-              : isEditing
-              ? "Update"
-              : "Create"}
-          </Button>
-        )}
+        <Button onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting
+            ? isEditing
+              ? "Updating..."
+              : "Creating..."
+            : isEditing
+            ? "Update"
+            : "Create"}
+        </Button>
       </div>
 
-      {loading ? (
+      {/* Show the submit loader when submitting */}
+      {isSubmitting && <BlogSubmitLoader isEditing={isEditing} />}
+      
+      {/* Show skeleton loader only during initial loading */}
+      {initialLoading ? (
         <BlogFormSkeleton />
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -200,10 +205,12 @@ const BlogForm = () => {
         />
 
         <div className="space-y-2">
-          <Label htmlFor="imageAlt">Image Alt Text</Label>
+          <Label htmlFor="imageAlt">
+            Image Alt Text <span className="text-red-500">*</span>
+          </Label>
           <Input
             id="imageAlt"
-            {...register("imageAlt")}
+            {...register("imageAlt", { required: "Image alt text is required" })}
             placeholder="Image alt text"
           />
           {errors.imageAlt && (
@@ -226,7 +233,7 @@ const BlogForm = () => {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="categoryId">Category</Label>
+              <Label htmlFor="categoryId">Category <span className="text-red-500">*</span></Label>
               <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm">
@@ -287,7 +294,7 @@ const BlogForm = () => {
               <select
                 className="col-span-9 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 id="categoryId"
-                {...register("categoryId")}
+                {...register("categoryId", { required: "Category is required" })}
               >
                 <option value="">Select Category</option>
                 {categories.map((category) => (
@@ -418,10 +425,12 @@ const BlogForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tags">Tags (comma separated)</Label>
+            <Label htmlFor="tags">
+              Tags (comma separated) <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="tags"
-              {...register("tags")}
+              {...register("tags", { required: "At least one tag is required" })}
               placeholder="tag1, tag2, tag3"
             />
             <p className="text-sm text-muted-foreground">
@@ -433,10 +442,12 @@ const BlogForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="excerpt">Excerpt</Label>
+            <Label htmlFor="excerpt">
+              Excerpt <span className="text-red-500">*</span>
+            </Label>
             <Textarea
               id="excerpt"
-              {...register("excerpt")}
+              {...register("excerpt", { required: "Excerpt is required" })}
               placeholder="Brief excerpt or summary of the blog post"
               rows={3}
             />

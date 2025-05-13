@@ -44,11 +44,14 @@ export const useBlogForm = (blogId) => {
   const updateBlogMutation = useUpdateBlogMutation(blogId);
 
   // Determine if any mutation is in progress
-  const isMutating =
+  const isSubmitting =
     createBlogMutation.isPending || updateBlogMutation.isPending;
 
-  // Combined loading state
-  const loading = isFetching || isMutating;
+  // Initial loading state (only for fetching existing blog data)
+  const initialLoading = isFetching;
+  
+  // Combined loading state for backward compatibility
+  const loading = initialLoading || isSubmitting;
 
   // Set form data when blog data is fetched
   useEffect(() => {
@@ -127,8 +130,33 @@ export const useBlogForm = (blogId) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.content) {
-      toast.error("Title and content are required");
+    // Validate all required fields
+    const requiredFields = {
+      title: "Title",
+      content: "Content",
+      excerpt: "Excerpt",
+      imageAlt: "Image alt text",
+      categoryId: "Category",
+      authorId: "Author",
+      tags: "Tags"
+    };
+
+    const missingFields = [];
+    
+    // Check each required field
+    for (const [field, label] of Object.entries(requiredFields)) {
+      if (!formData[field] || formData[field].trim() === '') {
+        missingFields.push(label);
+      }
+    }
+
+    // Special check for tags which could be an array
+    if (formData.tags && Array.isArray(formData.tags) && formData.tags.length === 0) {
+      missingFields.push("Tags");
+    }
+
+    if (missingFields.length > 0) {
+      toast.error(`The following fields are required: ${missingFields.join(', ')}`);
       return;
     }
 
@@ -237,6 +265,8 @@ export const useBlogForm = (blogId) => {
   return {
     formData,
     loading,
+    initialLoading,
+    isSubmitting,
     imageFile,
     imagePreview,
     isEditing,

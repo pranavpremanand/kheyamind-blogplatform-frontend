@@ -121,7 +121,7 @@ const AuthorDropdown = ({ register, watch, setValue, errors }) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor="authorId">Author</Label>
+        <Label htmlFor="authorId">Author <span className="text-red-500">*</span></Label>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">Add New</Button>
@@ -162,7 +162,7 @@ const AuthorDropdown = ({ register, watch, setValue, errors }) => {
           <select
             className="col-span-9 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             id="authorId"
-            {...register("authorId")}
+            {...register("authorId", { required: "Author is required" })}
           >
             <option value="">Select Author</option>
             {authors.map((author) => (
