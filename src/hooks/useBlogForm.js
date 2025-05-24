@@ -113,6 +113,16 @@ export const useBlogForm = (blogId) => {
         return;
       }
 
+      // Check if file type is allowed
+      const allowedTypes = ['jpg', 'jpeg', 'webp', 'avif', 'tiff', 'bmp'];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      
+      if (!allowedTypes.includes(fileExtension)) {
+        toast.error(`Invalid file type. Allowed types: ${allowedTypes.join(', ')}`);
+        e.target.value = null; // Reset the input
+        return;
+      }
+
       setImageFile(file);
       const preview = await createImagePreview(file);
       setImagePreview(preview);

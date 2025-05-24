@@ -12,11 +12,12 @@ const BlogImageUpload = ({ imagePreview, handleImageChange, isEditing }) => {
         id="image"
         name="image"
         type="file"
-        accept="image/*"
+        accept=".jpg,.jpeg,.webp,.avif,.tiff,.bmp"
         onChange={handleImageChange}
       />
       <p className="text-sm text-muted-foreground">
-        Recommended size: 1322x744 pixels (16:9 ratio) | Maximum file size: 2MB
+        Recommended size: 1322x744 pixels (16:9 ratio) | Maximum file size: 2MB | 
+        Allowed formats: jpg, jpeg, webp, avif, tiff, bmp
       </p>
 
       {imagePreview && (
