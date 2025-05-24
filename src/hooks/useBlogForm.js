@@ -114,7 +114,7 @@ export const useBlogForm = (blogId) => {
       }
 
       // Check if file type is allowed
-      const allowedTypes = ['jpg', 'jpeg', 'webp', 'avif', 'tiff', 'bmp'];
+      const allowedTypes = ['jpg', 'jpeg', 'webp', 'avif', 'tiff', 'bmp', 'png', 'gif'];
       const fileExtension = file.name.split('.').pop().toLowerCase();
       
       if (!allowedTypes.includes(fileExtension)) {
